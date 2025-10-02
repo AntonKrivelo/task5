@@ -149,9 +149,23 @@ export default function DataTable() {
     }
   };
 
+  const handleDeleteUnerifiedUser = async () => {
+    // try {
+    //   setIsLoading(true);
+    //   await fetchDeleteUser(selectedRows);
+    //   setUsers(users.filter((e) => !selectedRows?.includes(e?.id)));
+    //   setSelectedRows([]);
+    // } catch (e) {
+    //   console.error(e);
+    // } finally {
+    //   setIsLoading(false);
+    // }
+    console.log('delete');
+  };
+
   return (
     <Paper sx={{ width: '100%', p: 1 }}>
-      <div style={{ marginBottom: 10 }}>
+      <div style={{ marginBottom: 10, display: 'flex', gap: '10px' }}>
         <Button
           onClick={handleBlockUser}
           disabled={selectedRows.length === 0}
@@ -180,7 +194,7 @@ export default function DataTable() {
           Delete
         </Button>
         <Button
-          // onClick={handleDeleteUser}
+          onClick={handleDeleteUnerifiedUser}
           disabled={selectedRows.length === 0}
           variant="outlined"
           color="error"
