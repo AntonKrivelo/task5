@@ -29,6 +29,13 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
+const buildPath = path.join(__dirname, '../build');
+app.use(express.static(buildPath));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
+});
+
 app.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -237,13 +244,6 @@ app.get('/users/:id', (req, res) => {
     console.error('Error when receiving the user:', err);
     res.status(500).json({ error: 'Server error' });
   }
-});
-
-const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, 'build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 module.exports = app;
