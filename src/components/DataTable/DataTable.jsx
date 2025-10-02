@@ -179,6 +179,15 @@ export default function DataTable() {
         >
           Delete
         </Button>
+        <Button
+          // onClick={handleDeleteUser}
+          disabled={selectedRows.length === 0}
+          variant="outlined"
+          color="error"
+          startIcon={<DeleteForeverOutlinedIcon />}
+        >
+          Delete Unverified
+        </Button>
       </div>
       {!isLoading ? (
         <DataGrid
