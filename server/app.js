@@ -9,9 +9,12 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const indexRouter = require('./routes/index');
 const app = express();
+const __dirname = path.resolve();
+
 require('dotenv').config();
 
 app.use(cors());
+app.use(express.static(path.join(__dirname, 'build')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(logger('dev'));
@@ -48,8 +51,8 @@ app.post('/register', async (req, res) => {
       secure: true,
       auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
-      },
+        pass: process.env.GMAIL_PASS
+      }
     });
 
     const activationLink = `http://localhost:4000/activate/${userId}`;
@@ -61,14 +64,19 @@ app.post('/register', async (req, res) => {
         subject: 'Activate your account',
         text: `Hello ${name}, please activate your account: ${activationLink}`,
         html: `<p>Hello <b>${name}</b>,</p>
-               <p>Click <a href="${activationLink}">here</a> to activate your account.</p>`,
+               <p>Click <a href="${activationLink}">here</a> to activate your account.</p>`
       });
     } catch (mailErr) {
       console.error('Email send error:', mailErr);
-      return res.status(500).json({ error: 'Registration ok, but email not sent' });
+      return res
+        .status(500)
+        .json({ error: 'Registration ok, but email not sent' });
     }
 
-    res.json({ message: 'User registered! Check your email for activation link.', id: userId });
+    res.json({
+      message: 'User registered! Check your email for activation link.',
+      id: userId
+    });
   } catch (err) {
     if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       return res.status(400).json({ error: 'Email already exist' });
@@ -106,7 +114,9 @@ app.post('/login', (req, res) => {
     return res.status(400).json({ error: 'email and password are required' });
   }
 
-  const stmt = db.prepare('SELECT * FROM users WHERE email = ? AND password = ?');
+  const stmt = db.prepare(
+    'SELECT * FROM users WHERE email = ? AND password = ?'
+  );
   const user = stmt.get(email, password);
 
   if (!user) {
@@ -119,14 +129,18 @@ app.post('/login', (req, res) => {
 
   const updatedUser = { ...user, last_login: now };
 
-  const token = jwt.sign({ id: user.id, email: user.email, status: user.status }, 'MY_SECRET_KEY', {
-    expiresIn: '1h',
-  });
+  const token = jwt.sign(
+    { id: user.id, email: user.email, status: user.status },
+    'MY_SECRET_KEY',
+    {
+      expiresIn: '1h'
+    }
+  );
 
   res.json({
     message: 'successes login',
     user: updatedUser,
-    token,
+    token
   });
 });
 
@@ -151,7 +165,9 @@ app.delete('/users', (req, res) => {
   const { ids } = req.body;
 
   if (!Array.isArray(ids) || ids.length === 0) {
-    return res.status(400).json({ error: 'Need array with ids for remove users' });
+    return res
+      .status(400)
+      .json({ error: 'Need array with ids for remove users' });
   }
 
   try {
@@ -162,7 +178,7 @@ app.delete('/users', (req, res) => {
 
     res.json({
       message: 'users deleted',
-      deleted: result.changes,
+      deleted: result.changes
     });
   } catch (err) {
     console.error('Delete error:', err);
@@ -185,13 +201,15 @@ app.patch('/users/status', (req, res) => {
 
   try {
     const placeholders = ids.map(() => '?').join(',');
-    const stmt = db.prepare(`UPDATE users SET status = ? WHERE id IN (${placeholders})`);
+    const stmt = db.prepare(
+      `UPDATE users SET status = ? WHERE id IN (${placeholders})`
+    );
 
     const result = stmt.run(status, ...ids);
 
     res.json({
       message: 'Status updated',
-      updated: result.changes,
+      updated: result.changes
     });
   } catch (err) {
     console.error('Error when updating the status:', err);
