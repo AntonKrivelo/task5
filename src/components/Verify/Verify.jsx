@@ -10,7 +10,7 @@ export default function VerifyPage() {
       setMsg('Нет токена');
       return;
     }
-    fetch(`${process.env.REACT_APP_API_URL}/api/verify?token=${token}`)
+    fetch(`/api/verify?token=${token}`)
       .then((res) => res.text())
       .then(setMsg)
       .catch(() => setMsg('Ошибка верификации'));
