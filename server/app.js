@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const indexRouter = require('./routes/index');
 const app = express();
+var __dirname = path.resolve();
 
 require('dotenv').config();
 
@@ -29,14 +30,7 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-const buildPath = path.join(__dirname, '../build');
-app.use(express.static(buildPath));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(buildPath, 'index.html'));
-});
-
-app.post('/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -61,7 +55,7 @@ app.post('/register', async (req, res) => {
       }
     });
 
-    const activationLink = `http://localhost:4000/activate/${userId}`;
+    const activationLink = `http://localhost:4000/api/activate/${userId}`;
 
     try {
       await transporter.sendMail({
@@ -92,7 +86,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.get('/activate/:id', (req, res) => {
+app.get('/api/activate/:id', (req, res) => {
   const { id } = req.params;
 
   try {
@@ -113,7 +107,7 @@ app.get('/activate/:id', (req, res) => {
   }
 });
 
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -150,7 +144,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-app.get('/users', (req, res) => {
+app.get('/api/users', (req, res) => {
   try {
     const stmt = db.prepare(`
       SELECT id, name, email, status, last_login, created_at
@@ -167,7 +161,7 @@ app.get('/users', (req, res) => {
   }
 });
 
-app.delete('/users', (req, res) => {
+app.delete('/api/users', (req, res) => {
   const { ids } = req.body;
 
   if (!Array.isArray(ids) || ids.length === 0) {
@@ -192,7 +186,7 @@ app.delete('/users', (req, res) => {
   }
 });
 
-app.patch('/users/status', (req, res) => {
+app.patch('/api/users/status', (req, res) => {
   const { ids, status } = req.body;
 
   const allowedStatuses = ['unverified', 'active', 'blocked'];
@@ -223,7 +217,7 @@ app.patch('/users/status', (req, res) => {
   }
 });
 
-app.get('/users/:id', (req, res) => {
+app.get('/api/users/:id', (req, res) => {
   const { id } = req.params;
 
   try {
@@ -244,6 +238,13 @@ app.get('/users/:id', (req, res) => {
     console.error('Error when receiving the user:', err);
     res.status(500).json({ error: 'Server error' });
   }
+});
+
+const buildPath = path.join(__dirname, '../build');
+app.use(express.static(buildPath));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 module.exports = app;
