@@ -16,7 +16,7 @@ const columns = [
 ];
 
 const fetchDeleteUser = async (ids) => {
-  await fetch(`/api/users`, {
+  await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
@@ -49,7 +49,9 @@ export default function DataTable() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`/api/users`);
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/api/users`
+      );
 
       if (!response.ok) {
         throw new Error('Error');
@@ -66,7 +68,9 @@ export default function DataTable() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`/api/users/${loginUser.id}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/users/${loginUser.id}`
+        );
         if (!response.ok) {
           throw new Error('Error');
         }
