@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const indexRouter = require('./routes/index');
 const app = express();
-const __dirname = path.resolve();
 
 require('dotenv').config();
 
@@ -238,6 +237,13 @@ app.get('/users/:id', (req, res) => {
     console.error('Error when receiving the user:', err);
     res.status(500).json({ error: 'Server error' });
   }
+});
+
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 module.exports = app;
