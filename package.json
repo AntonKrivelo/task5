@@ -27,6 +27,9 @@
     "uuid": "^13.0.0",
     "web-vitals": "^2.1.4"
   },
+    "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "build": "react-scripts build",
     "serve": "serve -s build",
@@ -34,9 +37,6 @@
     "eject": "react-scripts eject",
     "start": "cd ./server & npm start",
     "install": "cd ./server && npm i"
-  },
-  "engines": {
-    "node": "20.x"
   },
   "eslintConfig": {
     "extends": [
