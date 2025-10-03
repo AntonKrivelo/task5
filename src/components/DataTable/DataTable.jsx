@@ -16,7 +16,7 @@ const columns = [
 ];
 
 const fetchDeleteUser = async (ids) => {
-  await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
+  await fetch(`/api/users`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
