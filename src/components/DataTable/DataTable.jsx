@@ -149,7 +149,7 @@ export default function DataTable() {
     }
   };
 
-  const fetchDeleteUnverifiedUsers = async (ids) => {
+  const fetchDeleteAllUnverifiedUsers = async (ids) => {
     const res = await fetch('/api/users/unverified', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -162,23 +162,21 @@ export default function DataTable() {
 
     return res.json();
   };
-
-  const handleDeleteUnverifiedUser = async () => {
+  const handleDeleteAllUnverified = async () => {
     try {
       setIsLoading(true);
 
       const unverifiedIds = users
-        .filter((u) => selectedRows.includes(u.id) && u.status === 'unverified')
+        .filter((u) => u.status === 'unverified')
         .map((u) => u.id);
 
       if (unverifiedIds.length === 0) {
         return;
       }
 
-      await fetchDeleteUnverifiedUsers(unverifiedIds);
+      await fetchDeleteAllUnverifiedUsers(unverifiedIds);
 
-      setUsers(users.filter((u) => !unverifiedIds.includes(u.id)));
-      setSelectedRows([]);
+      setUsers(users.filter((u) => u.status !== 'unverified'));
     } catch (e) {
       console.error(e);
     } finally {
@@ -224,7 +222,7 @@ export default function DataTable() {
           Delete
         </Button>
         <Button
-          onClick={handleDeleteUnverifiedUser}
+          onClick={handleDeleteAllUnverified}
           // disabled={selectedRows.length === 0}
           variant="outlined"
           // startIcon={<DeleteForeverOutlinedIcon />}
