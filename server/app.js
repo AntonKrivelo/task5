@@ -240,6 +240,33 @@ app.get('/api/users/:id', (req, res) => {
   }
 });
 
+app.delete('/api/users/unverified', (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ error: 'Need array with ids for remove users' });
+  }
+
+  try {
+    const placeholders = ids.map(() => '?').join(',');
+    const stmt = db.prepare(
+      `DELETE FROM users WHERE id IN (${placeholders}) AND status = 'unverified'`
+    );
+
+    const result = stmt.run(ids);
+
+    res.json({
+      message: 'unverified users deleted',
+      deleted: result.changes
+    });
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 const buildPath = path.join(__dirname, '../build');
 app.use(express.static(buildPath));
 

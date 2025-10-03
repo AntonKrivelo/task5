@@ -149,22 +149,42 @@ export default function DataTable() {
     }
   };
 
-  // const handleDeleteUnverified = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     await fetchUpdateStatus({ ids: selectedRows, status: 'unverified' });
-  //     setUsers((prevRows) =>
-  //       prevRows.map((row) =>
-  //         selectedRows.includes(row.id) ? { ...row, status: 'unverified' } : row
-  //       )
-  //     );
-  //     setSelectedRows([]);
-  //   } catch (e) {
-  //     console.error(e);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const fetchDeleteUnverifiedUsers = async (ids) => {
+    const res = await fetch('/api/users/unverified', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to delete unverified users');
+    }
+
+    return res.json();
+  };
+
+  const handleDeleteUnverifiedUser = async () => {
+    try {
+      setIsLoading(true);
+
+      const unverifiedIds = users
+        .filter((u) => selectedRows.includes(u.id) && u.status === 'unverified')
+        .map((u) => u.id);
+
+      if (unverifiedIds.length === 0) {
+        return;
+      }
+
+      await fetchDeleteUnverifiedUsers(unverifiedIds);
+
+      setUsers(users.filter((u) => !unverifiedIds.includes(u.id)));
+      setSelectedRows([]);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Paper sx={{ width: '100%', p: 1 }}>
@@ -204,7 +224,7 @@ export default function DataTable() {
           Delete
         </Button>
         <Button
-          // onClick={handleDeleteUnverified}
+          onClick={handleDeleteUnverifiedUser}
           // disabled={selectedRows.length === 0}
           variant="outlined"
           // startIcon={<DeleteForeverOutlinedIcon />}
