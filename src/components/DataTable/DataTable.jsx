@@ -16,7 +16,7 @@ const columns = [
 ];
 
 const fetchDeleteUser = async (ids) => {
-  await fetch(`/api/users`, {
+  await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ const fetchDeleteUser = async (ids) => {
 };
 
 const fetchUpdateStatus = async ({ ids, status }) => {
-  await fetch(`/api/users/status`, {
+  await fetch('/api/users/status', {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
