@@ -149,23 +149,33 @@ export default function DataTable() {
     }
   };
 
-  const handleDeleteUnerifiedUser = async () => {
-    // try {
-    //   setIsLoading(true);
-    //   await fetchDeleteUser(selectedRows);
-    //   setUsers(users.filter((e) => !selectedRows?.includes(e?.id)));
-    //   setSelectedRows([]);
-    // } catch (e) {
-    //   console.error(e);
-    // } finally {
-    //   setIsLoading(false);
-    // }
-    console.log('delete');
-  };
+  // const handleDeleteUnverified = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     await fetchUpdateStatus({ ids: selectedRows, status: 'unverified' });
+  //     setUsers((prevRows) =>
+  //       prevRows.map((row) =>
+  //         selectedRows.includes(row.id) ? { ...row, status: 'unverified' } : row
+  //       )
+  //     );
+  //     setSelectedRows([]);
+  //   } catch (e) {
+  //     console.error(e);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <Paper sx={{ width: '100%', p: 1 }}>
-      <div style={{ marginBottom: 10, display: 'flex', gap: '10px' }}>
+      <div
+        style={{
+          marginBottom: 10,
+          display: 'flex',
+          gap: '10px',
+          flexWrap: 'wrap'
+        }}
+      >
         <Button
           onClick={handleBlockUser}
           disabled={selectedRows.length === 0}
@@ -194,11 +204,10 @@ export default function DataTable() {
           Delete
         </Button>
         <Button
-          onClick={handleDeleteUnerifiedUser}
-          disabled={selectedRows.length === 0}
+          // onClick={handleDeleteUnverified}
+          // disabled={selectedRows.length === 0}
           variant="outlined"
-          color="error"
-          startIcon={<DeleteForeverOutlinedIcon />}
+          // startIcon={<DeleteForeverOutlinedIcon />}
         >
           Delete Unverified
         </Button>
