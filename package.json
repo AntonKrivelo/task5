@@ -35,8 +35,7 @@
     "serve": "serve -s build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "start": "cd ./server & npm start",
-    "install": "cd ./server && npm i"
+    "start": "cd ./server & npm start"
   },
   "eslintConfig": {
     "extends": [
