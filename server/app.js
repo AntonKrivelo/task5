@@ -123,6 +123,12 @@ app.post('/api/login', (req, res) => {
     return res.status(401).json({ error: 'Incorrect email or password' });
   }
 
+  if (user.status === 'blocked') {
+    return res.status(403).json({
+      error: 'Your account is blocked. Contact support.'
+    });
+  }
+
   const now = new Date().toISOString();
   const updateStmt = db.prepare('UPDATE users SET last_login = ? WHERE id = ?');
   updateStmt.run(now, user.id);
