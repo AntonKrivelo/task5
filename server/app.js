@@ -55,7 +55,7 @@ app.post('/api/register', async (req, res) => {
       }
     });
 
-    const activationLink = `/api/activate/${userId}`;
+    const activationLink = `http://localhost:4000/api/activate/${userId}`;
 
     try {
       await transporter.sendMail({
