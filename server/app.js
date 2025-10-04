@@ -38,6 +38,20 @@ app.post('/api/register', async (req, res) => {
   }
 
   try {
+    const checkStmt = db.prepare('SELECT * FROM users WHERE email = ?');
+    const existingUser = checkStmt.get(email);
+
+    if (existingUser) {
+      if (existingUser.status === 'blocked') {
+        return res.status(403).json({
+          error: 'This account is blocked. Registration is not possible.'
+        });
+      }
+
+      return res.status(400).json({
+        error: 'The user with this email already exists.'
+      });
+    }
     const userId = crypto.randomUUID();
     const stmt = db.prepare(`
       INSERT INTO users (id, name, email, password)
@@ -45,7 +59,7 @@ app.post('/api/register', async (req, res) => {
     `);
     stmt.run(userId, name, email, password);
 
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
@@ -59,7 +73,7 @@ app.post('/api/register', async (req, res) => {
 
     try {
       await transporter.sendMail({
-        from: `"MyApp" <anton.krivelo98@gmail.com>`,
+        from: `"MyApp" <${process.env.GMAIL_USER}>`,
         to: email,
         subject: 'Activate your account',
         text: `Hello ${name}, please activate your account: ${activationLink}`,
@@ -78,9 +92,6 @@ app.post('/api/register', async (req, res) => {
       id: userId
     });
   } catch (err) {
-    if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
-      return res.status(400).json({ error: 'Email already exist' });
-    }
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
